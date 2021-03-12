@@ -43,7 +43,7 @@ export default function Quote() {
     const image = items.characters.filter((person) => {
       return person.name === author || person.nickname === author;
     });
-    const photo = image.map((person) => person.img);
+    const photo = image.map((person) => person.image);
 
     return (
       <div className='quoteDiv' key={item.quote_id} style={style}>
