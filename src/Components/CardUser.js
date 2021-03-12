@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 200,
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
-    color: 'white',
+    color: '#fff',
     transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest,
     }),

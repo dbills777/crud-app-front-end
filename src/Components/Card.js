@@ -5,8 +5,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchIcon from '@material-ui/icons/Search';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+
 import {
   Card,
   CardHeader,
@@ -14,7 +15,6 @@ import {
   CardContent,
   CardActions,
   Collapse,
-  Container,
   IconButton,
   Typography,
   makeStyles,
@@ -77,6 +77,15 @@ const useStyles = makeStyles((theme) => ({
     margin: '5px',
     borderRadius: '50%',
   },
+  form: {
+    width: '100vw',
+    fontSize: '3rem',
+    backgroundColor: 'rgba(195, 195, 195, 0.621)',
+    textAlign: 'center',
+  },
+  text: {
+    color: 'white',
+  },
 }));
 
 const ListCard = () => {
@@ -86,7 +95,9 @@ const ListCard = () => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [characters, setCharacters] = useState([]);
   const [currentCharacter, setCurrentCharacter] = useState('');
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState(null);
+  const [newNickName, setNewNickName] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(null);
 
   const url = 'http://localhost:5000/character';
   const getCharacters = async () => {
@@ -124,7 +135,7 @@ const ListCard = () => {
     setOpenDialog(!openDialog);
     // console.log(currentCharacter._id)
     try {
-      await axios.delete(`http://localhost:5000/character/`, {
+      await axios.delete(`${url}`, {
         data: {
           productID: currentCharacter._id,
         },
@@ -136,40 +147,81 @@ const ListCard = () => {
   };
   const editInfoInDB = async () => {
     closeEditDialog();
-    console.log(newName)
-    console.log(currentCharacter)
-    try {
-      await axios.put(`http://localhost:5000/character/updateone`, {
-          productID: currentCharacter._id,
+    console.log(newName);
+    console.log(currentCharacter);
+    if (newName) {
+      try {
+        await axios.put(`${url}/update-name`, {
+          characterID: currentCharacter._id,
           name: newName,
-      });
-      setNewName('')
-      getCharacters();
-    } catch (error) {
-      console.error(error);
+        });
+        setNewName('');
+        getCharacters();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (newNickName) {
+      try {
+        await axios.put(`${url}/update-nick-name`, {
+          characterID: currentCharacter._id,
+          nickname: newNickName,
+        });
+        setNewName('');
+        getCharacters();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
   const handleExpandClick = (id) => {
     setExpanded({ ...expanded, [id]: !expanded[id] });
   };
+  const handleSeach = async () => {
+    try {
+      const response = await axios.get(`${url}/search?term=${searchTerm}`);
+      // sort to re add characters in order while developing.
+      const sorted = response.data.sort((a, b) => a.char_id - b.char_id);
+      setCharacters(sorted);
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
 
   return (
     <>
+      <div className={classes.form}>
+        <TextField
+          className={classes.text}
+          placeholder='Search'
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+          }}
+        />
+        <IconButton onClick={() => handleSeach()} aria-label='search'>
+          <SearchIcon />
+        </IconButton>
+        <IconButton aria-label='add movie'>
+          <AddCircleIcon />
+        </IconButton>
+      </div>
       {characters.map((item) => {
         return (
           <Card key={item._id} className={classes.root}>
             <CardHeader
               action={
-                <IconButton aria-label='settings' color={'white'}>
+                <IconButton aria-label='settings'>
                   <MoreVertIcon />
                 </IconButton>
               }
+              onClick={() => handleClickEditOpen({ item })}
               title={classes.title}
               subheader={item.name}
             />
-            <CardMedia color='white' className={classes.media} image={item.image} title={item.name} />
+            <CardMedia className={classes.media} image={item.image} title={item.name} />
             <CardContent>
-              <Typography variant='body2' color='white' component='p'>
+              <Typography variant='body2' component='p'>
                 <strong>Nick Name: </strong>
                 {item.nickname}
               </Typography>
@@ -223,6 +275,7 @@ const ListCard = () => {
           <Button onClick={deleteFromDB}>Delete Character</Button>
         </DialogActions>
       </Dialog>
+      {/* Edit Name dialog */}
       <Dialog open={openEditDialog} onClose={closeEditDialog} aria-labelledby='form-dialog-title'>
         <DialogTitle id='form-dialog-title'>Edit: {currentCharacter.name}</DialogTitle>
         <DialogContent>
@@ -235,12 +288,23 @@ const ListCard = () => {
             label='New Name'
             type='text'
             fullWidth
-            value={newName}
+            // value={newName}
             onChange={(e) => {
               setNewName(e.target.value);
             }}
           />
-          <TextField autoFocus margin='dense' id='nick-name' label='New Nick Name' type='text' fullWidth />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='nick-name'
+            label='New Nick Name'
+            type='text'
+            fullWidth
+            // value={newNickName}
+            onChange={(e) => {
+              setNewNickName(e.target.value);
+            }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeEditDialog} color='primary'>
@@ -251,6 +315,7 @@ const ListCard = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* End Edit Name Dialog */}
     </>
   );
 };
