@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
   Card,
@@ -25,9 +26,18 @@ import {
   DialogActions,
   TextField,
   Button,
+  Slide,
+  ListItem,
+  AppBar,
+  Toolbar,
+  List,
+  Divider,
 } from '@material-ui/core';
 import './Card.css';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction='up' ref={ref} {...props} />;
+});
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 200,
@@ -47,6 +57,14 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     // color: 'white',
   },
+  appBar: {
+    position: 'relative',
+  },
+  title2: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+
   media: {
     width: '100%',
     height: '150px',
@@ -98,7 +116,44 @@ const ListCard = () => {
   const [newName, setNewName] = useState(null);
   const [newNickName, setNewNickName] = useState(null);
   const [searchTerm, setSearchTerm] = useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [postData, setPostData] = useState({ image: '', nickname: '', name: '' });
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const updateField = (e) => {
+    setPostData({
+      ...postData,
+      [e.target.id]: e.target.value,
+      occupation: ['Actor'],
+      image: 'https://picsum.photos/200/300',
+      status: 'Alive',
+      char_id: 0,
+    });
+  };
+  const handleClose = async () => {
+    setOpen(false);
+    postNewCharacter();
+    // console.log(postData)
+  };
+  const postNewCharacter = async () => {
+    console.log(postData);
+      try {
+        await axios.post(`${url}/`, {
+          name: postData.name,
+          image: postData.image,
+          nickname: postData.nickname,
+          occupation: postData.occupation,
+          status: postData.status,
+          portrayed: postData.portrayed,
+          char_id: postData.char_id,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      getCharacters();
+  };
   const url = 'http://localhost:5000/character';
   const getCharacters = async () => {
     try {
@@ -122,7 +177,6 @@ const ListCard = () => {
   };
   const handleClickEditOpen = async (item) => {
     await setCurrentCharacter(item.item);
-    // console.log("mongoID to delete from db", item.item._id)
     setOpenEditDialog(!openEditDialog);
   };
   const closeDialog = () => {
@@ -186,8 +240,7 @@ const ListCard = () => {
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   return (
     <>
@@ -202,8 +255,8 @@ const ListCard = () => {
         <IconButton onClick={() => handleSeach()} aria-label='search'>
           <SearchIcon />
         </IconButton>
-        <IconButton aria-label='add movie'>
-          <AddCircleIcon />
+        <IconButton onClick={handleClickOpen} aria-label='add-character'>
+          <AddCircleIcon onClick={handleClickOpen} aria-label='add-character' />
         </IconButton>
       </div>
       {characters.map((item) => {
@@ -234,17 +287,17 @@ const ListCard = () => {
                 <EditIcon />
               </IconButton>
               <IconButton
-                className={clsx(classes.expand[item.char_id], {
-                  [classes.expandOpen]: expanded[item.char_id],
+                className={clsx(classes.expand[item._id], {
+                  [classes.expandOpen]: expanded[item._id],
                 })}
-                onClick={() => handleExpandClick(item.char_id)}
+                onClick={() => handleExpandClick(item._id)}
                 aria-expanded={expanded}
                 aria-label='show more'
               >
                 <ExpandMoreIcon />
               </IconButton>
             </CardActions>
-            <Collapse in={expanded[item.char_id]} timeout='auto' unmountOnExit>
+            <Collapse in={expanded[item._id]} timeout='auto' unmountOnExit>
               <CardContent>
                 <Typography paragraph>
                   <strong>INFO:</strong>
@@ -267,6 +320,7 @@ const ListCard = () => {
           </Card>
         );
       })}
+      {/* Delete Character Dialog */}
       <Dialog open={openDialog} onClose={closeDialog}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContentText>Are you sure you want to delete {currentCharacter.nickname}?</DialogContentText>
@@ -288,7 +342,6 @@ const ListCard = () => {
             label='New Name'
             type='text'
             fullWidth
-            // value={newName}
             onChange={(e) => {
               setNewName(e.target.value);
             }}
@@ -300,7 +353,6 @@ const ListCard = () => {
             label='New Nick Name'
             type='text'
             fullWidth
-            // value={newNickName}
             onChange={(e) => {
               setNewNickName(e.target.value);
             }}
@@ -316,6 +368,64 @@ const ListCard = () => {
         </DialogActions>
       </Dialog>
       {/* End Edit Name Dialog */}
+      {/* post diaglog screen */}
+      <div>
+        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton edge='start' color='inherit' onClick={handleClose} aria-label='close'>
+                <CloseIcon />
+              </IconButton>
+              <Typography variant='h6' className={classes.title2}>
+                Add A New Character
+              </Typography>
+              <Button autoFocus color='inherit' onClick={handleClose}>
+                save
+              </Button>
+            </Toolbar>
+          </AppBar>
+          <List>
+            <ListItem button>
+              <TextField
+                autoFocus
+                required
+                autoComplete='off'
+                margin='dense'
+                id='name'
+                label='Character Name'
+                type='text'
+                fullWidth
+                onChange={updateField}
+              />
+            </ListItem>
+            <ListItem button>
+              <TextField
+                required
+                autoComplete='off'
+                margin='dense'
+                id='nickname'
+                label='Character Nick-Name'
+                type='text'
+                fullWidth
+                onChange={updateField}
+              />
+            </ListItem>
+            <ListItem button>
+              <TextField
+                required
+                autoComplete='off'
+                margin='dense'
+                id='portrayed'
+                label='Portrayed By: '
+                type='Text'
+                fullWidth
+                onChange={updateField}
+              />
+            </ListItem>
+            <Divider />
+          </List>
+        </Dialog>
+      </div>
     </>
   );
 };
