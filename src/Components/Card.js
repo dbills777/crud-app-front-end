@@ -5,7 +5,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import SearchIcon from '@material-ui/icons/Search';
+// import SearchIcon from '@material-ui/icons/Search';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -230,12 +230,17 @@ const ListCard = () => {
     setExpanded({ ...expanded, [id]: !expanded[id] });
   };
   const handleSeach = async () => {
-    try {
-      const response = await axios.get(`${url}/search?term=${searchTerm}`);
-      const sorted = response.data.sort((a, b) => a.char_id - b.char_id);
-      setCharacters(sorted);
-    } catch (error) {
-      console.log(error);
+    console.log(searchTerm);
+    if (!searchTerm) {
+      getCharacters();
+    } else {
+      try {
+        const response = await axios.get(`${url}/search?term=${searchTerm}`);
+        const sorted = response.data.sort((a, b) => a.char_id - b.char_id);
+        setCharacters(sorted);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -247,11 +252,12 @@ const ListCard = () => {
           placeholder='Search'
           onChange={(e) => {
             setSearchTerm(e.target.value);
+            handleSeach();
           }}
         />
-        <IconButton onClick={() => handleSeach()} aria-label='search'>
+        {/* <IconButton onClick={() => handleSeach()} aria-label='search'>
           <SearchIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton onClick={handleClickOpen} aria-label='add-character'>
           <AddCircleIcon />
         </IconButton>
