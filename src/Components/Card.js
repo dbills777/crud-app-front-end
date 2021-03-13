@@ -167,7 +167,7 @@ const ListCard = () => {
 
   useEffect(() => {
     getCharacters();
-  }, []);
+  }, );
 
   const handleClickDeleteOpen = async (item) => {
     await setCurrentCharacter(item.item);
