@@ -8,8 +8,7 @@ const EpisodeContext = createContext({
 export const EpisodeContextProvider = (props) => {
   const [episodes, setEpisodes] = useState([]);
 
-  const url = 'https://www.breakingbadapi.com/api/episodes?series=Breaking+Bad';
-
+  const url = 'https://immense-island-84831.herokuapp.com/episode';
   useEffect(() => {
     const getCharacters = async () => {
       try {

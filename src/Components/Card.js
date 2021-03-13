@@ -118,7 +118,7 @@ const ListCard = () => {
   const [searchTerm, setSearchTerm] = useState(null);
   const [open, setOpen] = React.useState(false);
   const [postData, setPostData] = useState({ image: '', nickname: '', name: '' });
-
+  const url = `https://immense-island-84831.herokuapp.com/character`;
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -139,26 +139,25 @@ const ListCard = () => {
   };
   const postNewCharacter = async () => {
     console.log(postData);
-      try {
-        await axios.post(`${url}/`, {
-          name: postData.name,
-          image: postData.image,
-          nickname: postData.nickname,
-          occupation: postData.occupation,
-          status: postData.status,
-          portrayed: postData.portrayed,
-          char_id: postData.char_id,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-      getCharacters();
+    try {
+      await axios.post(`${url}/`, {
+        name: postData.name,
+        image: postData.image,
+        nickname: postData.nickname,
+        occupation: postData.occupation,
+        status: postData.status,
+        portrayed: postData.portrayed,
+        char_id: postData.char_id,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+    getCharacters();
   };
-  const url = 'http://localhost:5000/character';
+
   const getCharacters = async () => {
     try {
-      const response = await axios.get(url);
-      // sort to re add characters in order while developing.
+      const response = await axios.get(`${url}`);
       const sorted = response.data.sort((a, b) => a.char_id - b.char_id);
       setCharacters(sorted);
     } catch (error) {
@@ -187,7 +186,6 @@ const ListCard = () => {
   };
   const deleteFromDB = async () => {
     setOpenDialog(!openDialog);
-    // console.log(currentCharacter._id)
     try {
       await axios.delete(`${url}`, {
         data: {
@@ -234,7 +232,6 @@ const ListCard = () => {
   const handleSeach = async () => {
     try {
       const response = await axios.get(`${url}/search?term=${searchTerm}`);
-      // sort to re add characters in order while developing.
       const sorted = response.data.sort((a, b) => a.char_id - b.char_id);
       setCharacters(sorted);
     } catch (error) {
@@ -256,7 +253,7 @@ const ListCard = () => {
           <SearchIcon />
         </IconButton>
         <IconButton onClick={handleClickOpen} aria-label='add-character'>
-          <AddCircleIcon onClick={handleClickOpen} aria-label='add-character' />
+          <AddCircleIcon />
         </IconButton>
       </div>
       {characters.map((item) => {

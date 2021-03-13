@@ -9,7 +9,7 @@ export const CharacterContextProvider = (props) => {
   const [characters, setCharacters] = useState([]);
 
   // const url = 'https://www.breakingbadapi.com/api/characters';
-  const url = 'http://localhost:5000/character';
+  const url = 'https://immense-island-84831.herokuapp.com/character';
   useEffect(() => {
     const getCharacters = async () => {
       try {

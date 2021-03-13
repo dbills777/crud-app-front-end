@@ -167,20 +167,7 @@ export default function PrimarySearchAppBar({ getQuery, props }) {
                       Quotes
                     </NavLink>
                   </ListItem>
-                  <ListItem>
-                    <NavLink
-                      to='/products'
-                      className={classes.navLinks}
-                      onClick={handleDrawerToggle}
-                      style={{
-                        display: 'block',
-                        textAlign: 'center',
-                        width: '100%',
-                      }}
-                    >
-                      Products
-                    </NavLink>
-                  </ListItem>
+
                   <ListItem>
                     <NavLink
                       to='/episodes'
@@ -233,13 +220,7 @@ export default function PrimarySearchAppBar({ getQuery, props }) {
                 >
                   Episodes
                 </NavLink>
-                <NavLink
-                  className={classes.notActive}
-                  to='#'
-                  onClick={alertMessage}
-                >
-                  Products
-                </NavLink>
+
               </div>
             </>
           ) : (
@@ -253,9 +234,7 @@ export default function PrimarySearchAppBar({ getQuery, props }) {
               <NavLink className={classes.navLinks} to='/episodes'>
                 Episodes Table
               </NavLink>
-              <NavLink className={classes.navLinks} to='/products'>
-                Products
-              </NavLink>
+              
             </div>
           )}
 
