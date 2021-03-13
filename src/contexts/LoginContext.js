@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useState } from 'react';
 
 const LoginContext = createContext({
-  isAuth: true,
+  isAuth: false,
   email: '',
   name: '',
   login: () => {},
@@ -10,7 +10,7 @@ const LoginContext = createContext({
 });
 
 export const LoginContextProvider = (props) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const loginHandler = () => {
