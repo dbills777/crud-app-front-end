@@ -1,3 +1,6 @@
+# This is The first phase of a fullstack application that I built. The project requirements are listed below.
+
+
 ## 1. Effectively use conditional logic and JavaScript array methods(e.g. Filter, Map, Reduce, Find) to render large lists.
 
 - [Quotes.js](/src/Components/Quote.js) map/conditional logic
