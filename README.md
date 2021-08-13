@@ -1,6 +1,6 @@
-#  The project requirements are listed below.
+- [View Live](https://bills-crud-app-frontend.netlify.app/characters)
 
-
+# The project requirements are listed below.
 
 ## 1. Effectively use conditional logic and JavaScript array methods(e.g. Filter, Map, Reduce, Find) to render large lists.
 
@@ -48,25 +48,21 @@ return quotes.map((item) => {
 
 ```javascript
 <TableBody>
-  {rows
-    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    .map((row) => {
-      return (
-        <TableRow hover role='checkbox' tabIndex={-1} key={row.episode_id}>
-          {columns.map((column) => {
-            const value = row[column.id];
-            return (
-              <TableCell key={column.id} align={column.align}>
-                {column.text}
-                {column.format && typeof value === 'number'
-                  ? column.format(value)
-                  : value}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      );
-    })}
+  {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+    return (
+      <TableRow hover role='checkbox' tabIndex={-1} key={row.episode_id}>
+        {columns.map((column) => {
+          const value = row[column.id];
+          return (
+            <TableCell key={column.id} align={column.align}>
+              {column.text}
+              {column.format && typeof value === 'number' ? column.format(value) : value}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+    );
+  })}
 </TableBody>
 ```
 
@@ -101,11 +97,7 @@ export const EpisodeContextProvider = (props) => {
     };
     getCharacters();
   }, []);
-  return (
-    <EpisodeContext.Provider value={{ episodes }}>
-      {props.children}
-    </EpisodeContext.Provider>
-  );
+  return <EpisodeContext.Provider value={{ episodes }}>{props.children}</EpisodeContext.Provider>;
 };
 ```
 
